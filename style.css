@@ -9,7 +9,7 @@
 }
 
 *{box-sizing:border-box}
-html,body{height:100%}
+html,body{height:100%;margin:0;padding:0;overflow-x:hidden;overflow-y:hidden;}
 body{
   margin:0;
   font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
@@ -22,7 +22,7 @@ body{
 }
 
 /* Page layout */
-.page{
+.page{height:100dvh;
   min-height:100vh;
   display:flex;
   flex-direction:column;
@@ -176,6 +176,7 @@ body{
 
 /* balloon emoji */
 .balloon{
+  position:fixed;
   font-size: 3.6rem; /* larger balloons */
   position:absolute;
   pointer-events:none;
@@ -207,14 +208,6 @@ body{
   .chat-window{ height: calc(60vh - 140px); } /* reduce height on mobile */
   .title{ font-size:1.6rem; }
   #cursor-follower{ display:none !important; } /* disable cursor for touch */
-  .balloon{ font-size:2.8rem; }
-}
-/* ...existing CSS... */
-
-.chat-window .message.you{
-  align-self:flex-end;
-  background: linear-gradient(180deg, rgba(255,215,0,0.08), rgba(255,215,0,0.02));
-  color:#fff; /* was #000 — now white text */
-  font-weight:600;
-  border:1px solid rgba(255,215,0,0.12);
+  .balloon{
+  position:fixed; font-size:2.8rem; }
 }
