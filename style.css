@@ -209,3 +209,12 @@ body{
   #cursor-follower{ display:none !important; } /* disable cursor for touch */
   .balloon{ font-size:2.8rem; }
 }
+/* ...existing CSS... */
+
+.chat-window .message.you{
+  align-self:flex-end;
+  background: linear-gradient(180deg, rgba(255,215,0,0.08), rgba(255,215,0,0.02));
+  color:#fff; /* was #000 — now white text */
+  font-weight:600;
+  border:1px solid rgba(255,215,0,0.12);
+}

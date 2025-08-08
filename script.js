@@ -1,16 +1,35 @@
 /* === Config === */
-const BALLOON_DURATION = 9000; // ms travel time
-const BALLOON_LIMIT_TIME = 30000; // show balloons for first 30s
+const BALLOON_DURATION = 9000;
+const BALLOON_LIMIT_TIME = 30000;
 const BALLOON_INITIAL_COUNT = 5;
 
-/* === Simple fake AI data === */
-const aiResponses = [
+/* === Expanded AI lines, no repeats until reset === */
+let aiResponses = [
   "Happy Birthday! 🎉 May your day be golden! 🏆",
   "You deserve another slice of cake — and some extra confetti. 🎂",
   "Legend status: activated. ✨",
   "Make a wish, I’ll hold the secret. 🤫",
   "VIP today. Treat yourself! 🥂",
+  "Hope your year is as amazing as you are! 🌟",
+  "Balloons, cake, and endless smiles — that's the plan! 🎈",
+  "Today is YOUR day — let's make it sparkle. ✨",
+  "Every candle on your cake is a wish waiting to come true.",
+  "Here’s to laughter, love, and lots of dessert. 🍰",
+  "Cheers to you and all the magic you bring! 🪄",
+  "Let the birthday adventures begin! 🚀"
 ];
+let usedResponses = [];
+
+function getAIReply(){
+  if (aiResponses.length === 0) {
+    aiResponses = [...usedResponses];
+    usedResponses = [];
+  }
+  const index = Math.floor(Math.random() * aiResponses.length);
+  const line = aiResponses.splice(index, 1)[0];
+  usedResponses.push(line);
+  return line;
+}
 
 /* === Elements === */
 const chatWindow = document.getElementById('chat-window');
@@ -20,21 +39,19 @@ const balloonWrap = document.getElementById('balloon-wrap');
 const cursor = document.getElementById('cursor-follower');
 const sendBtn = document.getElementById('send-btn');
 
-/* === Helper: append messages === */
+/* === Append messages with enhanced physics animation === */
 function appendMessage(who, text){
   const el = document.createElement('div');
   el.className = 'message ' + (who === 'You'? 'you': 'bot');
   el.innerHTML = `<strong>${who}</strong><div class="bubble">${text}</div>`;
   chatWindow.appendChild(el);
-  // auto-scroll
   chatWindow.scrollTop = chatWindow.scrollHeight;
-  // animate in
-  gsap.fromTo(el, {y:10, opacity:0}, {y:0, opacity:1, duration:0.45, ease:'power2.out'});
-}
-
-/* === Fake AI reply === */
-function getAIReply(){
-  return aiResponses[Math.floor(Math.random()*aiResponses.length)];
+  // "fly in" with bounce
+  gsap.fromTo(el, {y:-30, opacity:0, rotation:-2, scale:0.9}, {
+    y:0, opacity:1, rotation:0, scale:1,
+    duration:0.6,
+    ease:'elastic.out(1, 0.6)'
+  });
 }
 
 /* === Form submit === */
@@ -44,30 +61,22 @@ form.addEventListener('submit', (e) => {
   if(!val) return;
   appendMessage('You', val);
   input.value = '';
-  // send button micro effect
   gsap.fromTo(sendBtn, {scale:1}, {scale:0.96, duration:0.08, yoyo:true, repeat:1});
-
-  // fake thinking
-  const thinking = setTimeout(()=>{
+  setTimeout(()=>{
     appendMessage('AI Friend', getAIReply());
-    clearTimeout(thinking);
   }, 700);
 });
 
-/* === Balloons logic (spread across width) === */
+/* === Balloons === */
 let balloonStart = Date.now();
-
 function createBalloon(){
   const b = document.createElement('div');
   b.className = 'balloon';
   b.textContent = '🎈';
   balloonWrap.appendChild(b);
-
   const startX = Math.random() * window.innerWidth;
   const wobble = (Math.random()*200) - 100;
-  // position start
   gsap.set(b, { x: startX, y: window.innerHeight + 80, rotation: -8 + Math.random()*16, scale: 0.95 + Math.random()*0.2});
-  // animate upward with subtle sway
   gsap.to(b, {
     x: startX + wobble,
     y: -160,
@@ -77,12 +86,8 @@ function createBalloon(){
     onComplete: () => { b.remove(); }
   });
 }
-
-/* spawn loop (stop after BALLOON_LIMIT_TIME) */
 function launchBalloons(){
-  for(let i=0;i<BALLOON_INITIAL_COUNT;i++){
-    createBalloon();
-  }
+  for(let i=0;i<BALLOON_INITIAL_COUNT;i++) createBalloon();
   const spawnInterval = setInterval(()=>{
     if(Date.now() - balloonStart > BALLOON_LIMIT_TIME){
       clearInterval(spawnInterval);
@@ -92,19 +97,14 @@ function launchBalloons(){
   }, 1400);
 }
 
-/* === Cursor follower (desktop only) === */
+/* === Cursor follower === */
 function enableCursorFollower(){
-  // hide on touch devices
   if(('ontouchstart' in window) || navigator.maxTouchPoints > 0) return;
   cursor.style.display = 'block';
-  let lastX = window.innerWidth/2, lastY = window.innerHeight/2;
-  let mouseX = lastX, mouseY = lastY;
   document.addEventListener('mousemove', e => {
-    mouseX = e.clientX; mouseY = e.clientY;
-    gsap.to(cursor, { x: mouseX, y: mouseY, duration: 0.08, ease: 'power3.out' });
+    gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.08, ease: 'power3.out' });
     gsap.to(cursor, { scale: 1.0, duration: 0.12, ease:'power2.out' });
   });
-  // click micro effect
   document.addEventListener('mousedown', () => {
     gsap.to(cursor, { scale: 0.8, duration: 0.08 });
   });
@@ -118,13 +118,8 @@ gsap.from(".title", { y:-40, opacity:0, duration:0.9, ease:"back.out(1.2)" });
 gsap.from(".subtitle", { y:-10, opacity:0, duration:0.6, delay:0.15 });
 gsap.from("#chat-card", { scale:0.96, opacity:0, duration:0.9, delay:0.25, ease:"elastic.out(1,0.6)" });
 
-/* === start balloons and cursor === */
+/* === Start balloons and cursor === */
 launchBalloons();
 enableCursorFollower();
-
-/* === Accessibility: focus on input quickly === */
 input.focus();
-
-/* === optional: polite initial greeting message === */
 setTimeout(()=> appendMessage('AI Friend', 'Hi — I\'m your golden party buddy! Say something to get a fun line.'), 650);
-
