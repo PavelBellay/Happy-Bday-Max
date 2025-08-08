@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Happy Birthday — Max AI</title>
+
+  <!-- Google Font (optional, helps the pro look) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- custom cursor follower (JS will disable on touch devices) -->
+  <div id="cursor-follower" aria-hidden="true"></div>
+
+  <main class="page">
+    <header class="header">
+      <h1 class="title"><span class="emoji">🎈</span> <span class="text">Happy Birthday!</span></h1>
+      <p class="subtitle">A little AI friend has a golden message for you</p>
+    </header>
+
+    <section class="stage">
+      <!-- floating balloons container (created by JS) -->
+      <div id="balloon-wrap" aria-hidden="true"></div>
+
+      <!-- chat card -->
+      <aside id="chat-card" class="card">
+        <div id="chat-window" class="chat-window" role="log" aria-live="polite"></div>
+
+        <form id="chat-form" class="chat-form" autocomplete="off">
+          <input id="user-input" name="message" type="text" placeholder="Say something nice..." inputmode="text" required />
+          <button id="send-btn" type="submit" aria-label="Send message">Send</button>
+        </form>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <small>Made with ✨ for a very special person</small>
+    </footer>
+  </main>
+
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- Main script -->
+  <script src="script.js"></script>
+</body>
+</html>
